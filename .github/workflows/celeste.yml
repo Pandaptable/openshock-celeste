@@ -62,4 +62,4 @@ jobs:
       uses: softprops/action-gh-release@v2.0.8
       with:
         tag_name: Celeste
-        files: bin/Release/**
+        files: Source/bin/Release/**
