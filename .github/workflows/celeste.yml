@@ -63,4 +63,3 @@ jobs:
       with:
         tag_name: Celeste
         files: bin/Release/**
-        github_token: ${{ secrets.GITHUB_TOKEN }}
