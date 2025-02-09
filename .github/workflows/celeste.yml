@@ -50,7 +50,7 @@ jobs:
       run: dotnet restore Openshock.sln
 
     - name: Build project
-      run: dotnet build Openshock.sln --configuration Release
+      run: dotnet build Openshock.sln --configuration Release /p:LangVersion=preview
 
     - name: Upload build artifact
       uses: actions/upload-artifact@v4
