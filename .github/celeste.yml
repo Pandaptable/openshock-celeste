@@ -1,0 +1,69 @@
+name: Build
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - Source/OpenshockModule.cs
+      - Source/OpenshockModuleSaveData.cs
+      - Source/OpenshockModuleSession.cs
+      - Source/OpenshockModuleSettings.cs
+      - Source/menu/ButtonInputString.cs
+      - Source/menu/FloatSlider.cs
+      - Source/Openshock.csproj
+      - Openshock.sln
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Parse Everest Dependency
+      working-directory: Celeste
+      run: |
+        EVERESTDEP=$(yq eval '.[0].Dependencies[] | select(.Name == "EverestCore").Version' -- everest.yaml)
+        echo "EVERESTDEP=$EVERESTDEP" >> $GITHUB_ENV
+
+    - name: Print Everest Dependency
+      run: echo "EVERESTDEP=${{ env.EVERESTDEP }}"
+
+    - name: Download Everest stripped lib
+      uses: robinraju/release-downloader@v1.2
+      with:
+        repository: EverestAPI/Everest
+        tag: stable-${{ env.EVERESTDEP }}
+        fileName: lib-stripped.zip
+        out-file-path: Celeste
+
+    - name: Extract lib-stripped.zip
+      working-directory: Celeste
+      run: unzip lib-stripped.zip
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 7.0.x
+
+    - name: Restore with .NET Core
+      working-directory: Celeste
+      run: dotnet restore
+
+    - name: Build with .NET Core
+      working-directory: Celeste
+      run: dotnet build "/p:Configuration=Release"
+      env:
+        CELESTEGAMEPATH: ${{ github.workspace }}/lib-stripped
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v1.0.0
+      with:
+        name: main
+        path: Openshock.zip
+
+    - name: GH Release
+      uses: softprops/action-gh-release@v2.0.8
+      with:
+        tag_name: Celeste
+        files: Openshock.zip
+
