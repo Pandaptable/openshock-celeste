@@ -3,5 +3,9 @@
 # make sure to also include the .everestignore file in the zip by adding it
 # to the ZippedFiles tag in the .csproj file, or the artifact paths in the
 # Github workflow file if you're using GitHub actions for publishing.
+.vs
+.vscode
+.github
 Source/
+Assets/
 Openshock.zip

@@ -10,7 +10,7 @@ public class OpenshockModuleSettings : EverestModuleSettings
 	private TextMenu.OnOff ToggleEntry;
 
 	[SettingIgnore]
-	public bool DebugLog { get; private set; } = true;
+	public bool DebugLog { get; private set; } = false;
 	private TextMenu.OnOff DebugLogEntry;
 
 	[SettingIgnore]
