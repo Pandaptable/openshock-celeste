@@ -29,6 +29,18 @@ jobs:
     - name: Print Everest Dependency
       run: echo "EVERESTDEP=${{ env.EVERESTDEP }}"
 
+    - name: Download Everest stripped lib
+      uses: robinraju/release-downloader@v1.2
+      with:
+        repository: EverestAPI/Everest
+        tag: stable-${{ env.EVERESTDEP }}
+        fileName: lib-stripped.zip
+        out-file-path: Celeste
+  
+    - name: Extract lib-stripped.zip
+      working-directory: Celeste
+      run: unzip lib-stripped.zip
+
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v3
       with:
