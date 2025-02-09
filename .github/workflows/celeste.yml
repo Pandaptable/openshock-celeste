@@ -17,12 +17,13 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
     - name: Parse Everest Dependency
-      working-directory: Celeste
+      id: parse-everest
       run: |
-        EVERESTDEP=$(yq eval '.[0].Dependencies[] | select(.Name == "EverestCore").Version' -- everest.yaml)
+        EVERESTDEP=$(yq eval '.[0].Dependencies[] | select(.Name == "EverestCore").Version' everest.yaml)
         echo "EVERESTDEP=$EVERESTDEP" >> $GITHUB_ENV
 
     - name: Print Everest Dependency
@@ -34,36 +35,31 @@ jobs:
         repository: EverestAPI/Everest
         tag: stable-${{ env.EVERESTDEP }}
         fileName: lib-stripped.zip
-        out-file-path: Celeste
-
+        out-file-path: Source
+  
     - name: Extract lib-stripped.zip
-      working-directory: Celeste
+      working-directory: Source
       run: unzip lib-stripped.zip
 
     - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
+      uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 7.0.x
 
-    - name: Restore with .NET Core
-      working-directory: Celeste
-      run: dotnet restore
+    - name: Restore dependencies
+      run: dotnet restore Openshock.sln
 
-    - name: Build with .NET Core
-      working-directory: Celeste
-      run: dotnet build "/p:Configuration=Release"
-      env:
-        CELESTEGAMEPATH: ${{ github.workspace }}/lib-stripped
+    - name: Build project
+      run: dotnet build Openshock.sln --configuration Release /p:LangVersion=preview
 
-    - name: Upload artifact
-      uses: actions/upload-artifact@v1.0.0
+    - name: Upload build artifact
+      uses: actions/upload-artifact@v4
       with:
-        name: main
-        path: Openshock.zip
+        name: Openshock-Build
+        path: bin/Release/
 
-    - name: GH Release
+    - name: Create GitHub Release
       uses: softprops/action-gh-release@v2.0.8
       with:
         tag_name: Celeste
-        files: Openshock.zip
-
+        files: bin/Release/**
