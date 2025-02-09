@@ -38,8 +38,8 @@ jobs:
         out-file-path: Celeste
   
     - name: Extract lib-stripped.zip
-      working-directory: Celeste
-      run: unzip lib-stripped.zip
+      working-directory: Source
+      run: unzip ../Celeste/lib-stripped.zip -d lib-stripped
 
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v3
