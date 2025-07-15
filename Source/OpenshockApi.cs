@@ -33,15 +33,40 @@ namespace Celeste.Mod.Openshock
 		}
 
 		private static HttpClient client = null;
+		private static string currentApiKey = null;
+		private static string currentBaseUrl = null;
+
+		private static void EnsureClientConfigured()
+		{
+			string apiKey = OpenshockModule.Settings.ApiKey;
+			string baseUrl = OpenshockModule.Settings.ApiBaseUrl;
+
+			// Check if client needs to be recreated due to settings changes
+			if (client == null || currentApiKey != apiKey || currentBaseUrl != baseUrl)
+			{
+				// Dispose old client if it exists
+				client?.Dispose();
+				
+				// Create new client
+				client = new HttpClient();
+				client.DefaultRequestHeaders.Add("OpenShockToken", apiKey);
+				client.DefaultRequestHeaders.Add("User-Agent", "Celeste-OpenShock-Mod/1.0");
+				
+				// Track current settings
+				currentApiKey = apiKey;
+				currentBaseUrl = baseUrl;
+			}
+
+			// Ensure User-Agent header is always present
+			if (!client.DefaultRequestHeaders.Contains("User-Agent"))
+			{
+				client.DefaultRequestHeaders.Add("User-Agent", "Celeste-OpenShock-Mod/1.0");
+			}
+		}
 
 		public static void Send(List<Shock> shocks)
 		{
-			if (client == null)
-			{
-				// First time initializing
-				client = new HttpClient();
-				client.DefaultRequestHeaders.Add("OpenShockToken", OpenshockModule.Settings.ApiKey);
-			}
+			EnsureClientConfigured();
 
 			UriBuilder builder = new UriBuilder(OpenshockModule.Settings.ApiBaseUrl);
 			builder.Path = "/2/shockers/control";

@@ -24,7 +24,8 @@ public class OpenshockModuleSettings : EverestModuleSettings
 	public enum IntensityModeEnum
 	{
 		Range = 0,
-		Static
+		Static,
+		Incremental
 	}
 	[SettingIgnore]
 	public IntensityModeEnum IntensityMode { get; private set; } = IntensityModeEnum.Range;
@@ -242,7 +243,7 @@ public class OpenshockModuleSettings : EverestModuleSettings
 		{
 			IntensityMode = value;
 
-			if (IntensityMode == IntensityModeEnum.Range)
+			if (IntensityMode == IntensityModeEnum.Range || IntensityMode == IntensityModeEnum.Incremental)
 			{
 				IntensityRangeMinimumEntry.Visible = true;
 				IntensityRangeMaximumEntry.Visible = true;
