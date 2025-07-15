@@ -38,9 +38,10 @@ namespace Celeste.Mod.Openshock
 		{
 			if (client == null)
 			{
-				// First time initializing
-				client = new HttpClient();
-				client.DefaultRequestHeaders.Add("OpenShockToken", OpenshockModule.Settings.ApiKey);
+			    // First time initializing
+			    client = new HttpClient();
+			    client.DefaultRequestHeaders.Add("OpenShockToken", OpenshockModule.Settings.ApiKey);
+			    client.DefaultRequestHeaders.Add("User-Agent", "Celeste-OpenShock-Mod/1.0");
 			}
 
 			UriBuilder builder = new UriBuilder(OpenshockModule.Settings.ApiBaseUrl);
