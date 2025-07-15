@@ -17,6 +17,7 @@ public class OpenshockModule : EverestModule
 	public override Type SaveDataType => typeof(OpenshockModuleSaveData);
 	public static OpenshockModuleSaveData SaveData => (OpenshockModuleSaveData)Instance._SaveData;
 	private Random random = new Random();
+	private int currentIncrementalIntensity = 0;
 
 	public OpenshockModule()
 	{
@@ -114,6 +115,22 @@ public class OpenshockModule : EverestModule
 				return random.Next(Settings.IntensityRangeMinimum, Settings.IntensityRangeMaximum);
 			case OpenshockModuleSettings.IntensityModeEnum.Static:
 				return Settings.IntensityStatic;
+			case OpenshockModuleSettings.IntensityModeEnum.Incremental:
+				// Initialize if this is the first time or if settings changed
+				if (currentIncrementalIntensity == 0)
+				{
+					currentIncrementalIntensity = Settings.IntensityRangeMinimum;
+				}
+				
+				int intensity = currentIncrementalIntensity;
+				
+				// Increment for next time, but cap at maximum
+				if (currentIncrementalIntensity < Settings.IntensityRangeMaximum)
+				{
+					currentIncrementalIntensity++;
+				}
+				
+				return intensity;
 			default:
 				throw new ArgumentOutOfRangeException("IntensityMode is set unreasonably");
 		}
