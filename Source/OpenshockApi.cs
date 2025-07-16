@@ -46,12 +46,12 @@ namespace Celeste.Mod.Openshock
 			{
 				// Dispose old client if it exists
 				client?.Dispose();
-				
+
 				// Create new client
 				client = new HttpClient();
 				client.DefaultRequestHeaders.Add("OpenShockToken", apiKey);
 				client.DefaultRequestHeaders.Add("User-Agent", "Celeste-OpenShock-Mod/1.0");
-				
+
 				// Track current settings
 				currentApiKey = apiKey;
 				currentBaseUrl = baseUrl;

@@ -26,8 +26,8 @@ public class OpenshockModule : EverestModule
 		// debug builds use verbose logging
 		Logger.SetLogLevel(nameof(OpenshockModule), LogLevel.Verbose);
 #else
-        // release builds use info logging to reduce spam in log files
-        Logger.SetLogLevel(nameof(OpenshockModule), LogLevel.Info);
+		// release builds use info logging to reduce spam in log files
+		Logger.SetLogLevel(nameof(OpenshockModule), LogLevel.Info);
 #endif
 	}
 
@@ -61,36 +61,36 @@ public class OpenshockModule : EverestModule
 		switch (Settings.ShockMode)
 		{
 			case OpenshockModuleSettings.ShockModeEnum.All:
-			{
-				foreach (string id in Settings.ShockerList)
 				{
-					shocks.Add(new OpenshockApi.Shock
+					foreach (string id in Settings.ShockerList)
 					{
-						id = id
-					});
+						shocks.Add(new OpenshockApi.Shock
+						{
+							id = id
+						});
+					}
+					break;
 				}
-				break;
-			}
 			case OpenshockModuleSettings.ShockModeEnum.Random:
-			{
-				if (Settings.ShockerList.Count > 0)
 				{
-					int index = random.Next(Settings.ShockerList.Count);
+					if (Settings.ShockerList.Count > 0)
+					{
+						int index = random.Next(Settings.ShockerList.Count);
+						shocks.Add(new OpenshockApi.Shock
+						{
+							id = Settings.ShockerList[index]
+						});
+					}
+					break;
+				}
+			case OpenshockModuleSettings.ShockModeEnum.Single:
+				{
 					shocks.Add(new OpenshockApi.Shock
 					{
-						id = Settings.ShockerList[index]
+						id = Settings.ShockerSingle
 					});
+					break;
 				}
-				break;
-			}
-			case OpenshockModuleSettings.ShockModeEnum.Single:
-			{
-				shocks.Add(new OpenshockApi.Shock
-				{
-					id = Settings.ShockerSingle
-				});
-				break;
-			}
 		}
 
 		// For each of them select intensity and duration
@@ -121,15 +121,15 @@ public class OpenshockModule : EverestModule
 				{
 					currentIncrementalIntensity = Settings.IntensityRangeMinimum;
 				}
-				
+
 				int intensity = currentIncrementalIntensity;
-				
+
 				// Increment for next time, but cap at maximum
 				if (currentIncrementalIntensity < Settings.IntensityRangeMaximum)
 				{
 					currentIncrementalIntensity++;
 				}
-				
+
 				return intensity;
 			default:
 				throw new ArgumentOutOfRangeException("IntensityMode is set unreasonably");
@@ -141,14 +141,14 @@ public class OpenshockModule : EverestModule
 		switch (Settings.DurationMode)
 		{
 			case OpenshockModuleSettings.DurationModeEnum.Range:
-			{
-				float value = random.NextFloat() * (Settings.DurationRangeMaximum - Settings.DurationRangeMinimum) + Settings.DurationRangeMinimum;
-				return (int)(float.Round(value, 1) * 1000.0f);
-			}
+				{
+					float value = random.NextFloat() * (Settings.DurationRangeMaximum - Settings.DurationRangeMinimum) + Settings.DurationRangeMinimum;
+					return (int)(float.Round(value, 1) * 1000.0f);
+				}
 			case OpenshockModuleSettings.DurationModeEnum.Static:
-			{
-				return (int)Math.Floor(float.Round(Settings.DurationStatic, 1) * 1000.0f);
-			}
+				{
+					return (int)Math.Floor(float.Round(Settings.DurationStatic, 1) * 1000.0f);
+				}
 			default:
 				throw new ArgumentOutOfRangeException("DurationMode is set unreasonably");
 		}
