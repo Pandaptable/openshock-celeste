@@ -17,49 +17,49 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Parse Everest Dependency
-      id: parse-everest
-      run: |
-        EVERESTDEP=$(yq eval '.[0].Dependencies[] | select(.Name == "EverestCore").Version' everest.yaml)
-        echo "EVERESTDEP=$EVERESTDEP" >> $GITHUB_ENV
+      - name: Parse Everest Dependency
+        id: parse-everest
+        run: |
+          EVERESTDEP=$(yq eval '.[0].Dependencies[] | select(.Name == "EverestCore").Version' everest.yaml)
+          echo "EVERESTDEP=$EVERESTDEP" >> $GITHUB_ENV
 
-    - name: Print Everest Dependency
-      run: echo "EVERESTDEP=${{ env.EVERESTDEP }}"
+      - name: Print Everest Dependency
+        run: echo "EVERESTDEP=${{ env.EVERESTDEP }}"
 
-    - name: Download Everest stripped lib
-      uses: robinraju/release-downloader@v1.2
-      with:
-        repository: EverestAPI/Everest
-        tag: stable-${{ env.EVERESTDEP }}
-        fileName: lib-stripped.zip
-        out-file-path: Source
-  
-    - name: Extract lib-stripped.zip
-      working-directory: Source
-      run: unzip lib-stripped.zip
+      - name: Download Everest stripped lib
+        uses: robinraju/release-downloader@v1.2
+        with:
+          repository: EverestAPI/Everest
+          tag: stable-${{ env.EVERESTDEP }}
+          fileName: lib-stripped.zip
+          out-file-path: Source
 
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: 7.0.x
+      - name: Extract lib-stripped.zip
+        working-directory: Source
+        run: unzip lib-stripped.zip
 
-    - name: Restore dependencies
-      run: dotnet restore Openshock.sln
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 8.0.x
 
-    - name: Build project
-      run: dotnet build Openshock.sln --configuration Release /p:LangVersion=preview
+      - name: Restore dependencies
+        run: dotnet restore Openshock.sln
 
-    - name: Upload build artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: Openshock-Build
-        path: Openshock.zip
+      - name: Build project
+        run: dotnet build Openshock.sln --configuration Release /p:LangVersion=preview
 
-    - name: Create GitHub Release
-      uses: softprops/action-gh-release@v2.0.8
-      with:
-        tag_name: Celeste
-        files: Openshock.zip
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Openshock-Build
+          path: Openshock.zip
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2.0.8
+        with:
+          tag_name: Celeste
+          files: Openshock.zip
