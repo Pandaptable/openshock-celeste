@@ -1,5 +1,5 @@
 - Name: Openshock
-  Version: 1.0.0
+  Version: 1.0.1
   DLL: bin/Openshock.dll
   Dependencies:
     - Name: EverestCore
